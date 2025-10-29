@@ -9,11 +9,11 @@
 using namespace std;
 
 // Global arrays for node information
-const int MAX_NODES = 64;
-int weightArr[MAX_NODES];
-int leftArr[MAX_NODES];
-int rightArr[MAX_NODES];
-char charArr[MAX_NODES];
+const int MAX_NODES = 64; // constant for the max number of node
+int weightArr[MAX_NODES]; // declair an array for the frequencies/combined weights
+int leftArr[MAX_NODES];   // array for indices of left children, -1 if leaf
+int rightArr[MAX_NODES];  // array for indices of right children, -1 if leaf
+char charArr[MAX_NODES];  // array for the characters in the message
 
 // Function prototypes
 void buildFrequencyTable(int freq[], const string& filename);
@@ -23,10 +23,14 @@ void generateCodes(int root, string codes[]);
 void encodeMessage(const string& filename, string codes[]);
 
 int main() {
-    int freq[26] = {0};
+    int freq[26] = {0}; // init an array for the frequencies of the letters in the alphabet to 0
 
     // Step 1: Read file and count letter frequencies
-    buildFrequencyTable(freq, "input.txt");
+    buildFrequencyTable(freq, "input.txt"); // updates the frequencies for the letters in the text
+
+    for (int i = 0; i < 26; i++) {
+        cout << freq[i] << endl;
+    }
 
     // Step 2: Create leaf nodes for each character with nonzero frequency
     int nextFree = createLeafNodes(freq);
@@ -50,48 +54,62 @@ int main() {
 
 // Step 1: Read file and count frequencies
 void buildFrequencyTable(int freq[], const string& filename) {
-    ifstream file(filename);
+    ifstream file(filename); // try to open the file
     if (!file.is_open()) {
+        // the file failed to open
         cerr << "Error: could not open " << filename << "\n";
-        exit(1);
+        exit(1); // leave
     }
-
-    char ch;
+    // file open was good
+    char ch; // make a char var to be used to read in the message and as a temp to converting to lower
+    // while there are characters in the file
     while (file.get(ch)) {
-        // Convert uppercase to lowercase
+        // check for letter
         if (ch >= 'A' && ch <= 'Z')
-            ch = ch - 'A' + 'a';
+            ch = ch - 'A' + 'a'; // normalize to lowercase
 
         // Count only lowercase letters
         if (ch >= 'a' && ch <= 'z')
-            freq[ch - 'a']++;
+            freq[ch - 'a']++; // increment the index of the array to correspond to the frequency of the letters in the message
     }
-    file.close();
+    file.close(); // close the file safely
 
     cout << "Frequency table built successfully.\n";
 }
 
-// Step 2: Create leaf nodes for each character
+// Step 2: Create leaf nodes for each character, adds the elements alphabetically to char/weight/left/right
 int createLeafNodes(int freq[]) {
-    int nextFree = 0;
+    int nextFree = 0; // this is the next available index for charArr, weightArr, left, and right
+    // loop for letters a-z
     for (int i = 0; i < 26; ++i) {
+        // we will only add the characters (and associated frequencies) to the charArr and weightArr in the order they are encountered
         if (freq[i] > 0) {
-            charArr[nextFree] = 'a' + i;
-            weightArr[nextFree] = freq[i];
-            leftArr[nextFree] = -1;
-            rightArr[nextFree] = -1;
-            nextFree++;
+            // the current frequency is greater than zero so we add it
+            charArr[nextFree] = 'a' + i; // add a-z if the frequency of the char is greater than 0
+            weightArr[nextFree] = freq[i]; // the weights correspond to the number of child elements   that element has
+            leftArr[nextFree] = -1; // init them all to -1
+            rightArr[nextFree] = -1; // init them all to -1
+            nextFree++; // increment the next free index
         }
     }
     cout << "Created " << nextFree << " leaf nodes.\n";
-    return nextFree;
+    return nextFree; // return the next free index
 }
 
 // Step 3: Build the encoding tree using heap operations
 int buildEncodingTree(int nextFree) {
-    // TODO:
-    // 1. Create a MinHeap object.
-    // 2. Push all leaf node indices into the heap.
+    MinHeap minHeap; // Create a MinHeap object.
+
+    // Push all leaf node indices into the heap.
+    // runs for all elements we added to weights/chars/lefts/rights
+    for (int i = 0; i < nextFree; ++i) {
+        minHeap.push(i, weightArr); // call push on minHeap and pass the current index and weightArr[i]
+    }
+    for (int i = 0; i < nextFree; ++i) {
+        cout << minHeap.peek()<< endl;
+        minHeap.pop(&weightArr[i]);
+    }
+
     // 3. While the heap size is greater than 1:
     //    - Pop two smallest nodes
     //    - Create a new parent node with combined weight

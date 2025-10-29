@@ -42,14 +42,14 @@
 			"compileCommandFragments" : 
 			[
 				{
-					"fragment" : "-g -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX15.5.sdk -fcolor-diagnostics"
+					"fragment" : "-g -std=gnu++14 -fcolor-diagnostics"
 				}
 			],
 			"includes" : 
 			[
 				{
 					"backtrace" : 2,
-					"path" : "/Users/manjumuralidharan/CLionProjects/fa25PA2/."
+					"path" : "/Users/jacksonadams/Desktop/SDSU/Courses/Fall2025/CS210/fa25PA2/."
 				}
 			],
 			"language" : "CXX",
@@ -74,10 +74,6 @@
 		[
 			{
 				"fragment" : "-g",
-				"role" : "flags"
-			},
-			{
-				"fragment" : "",
 				"role" : "flags"
 			}
 		],

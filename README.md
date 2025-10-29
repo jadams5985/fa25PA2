@@ -139,7 +139,7 @@ Do not add additional files.
 - Compile and run with:
 
 ```bash
-g++ -std=c++17 main.cpp -o encoder
+  g++ -std=c++17 main.cpp -o encoder
 ./encoder
 ```
 
