@@ -92,7 +92,7 @@ public:
     // remove the root element and replace it with the last element
     int pop(int weightArr[]) {
         if (size == 0) { return -1; } // null check
-        int minIndex = data[0];       // index of the smallest node
+        int minIndex = data[0];       // index of the node with the smallest weight
         data[0] = data[size - 1];     // move last index to top
         size--; // decrement the size
         downheap(0, weightArr);   // restore heap property

@@ -104,14 +104,14 @@ int buildEncodingTree(int nextFree) {
     // Push all leaf node indices into the heap.
     // runs for all elements we added to weights/chars/lefts/rights
     for (int i = 0; i < nextFree; ++i) {
-        minHeap.push(i, weightArr); // call push on minHeap and pass the current index and weightArr[i]
+        minHeap.push(i, weightArr); // call push on minHeap and pass the current index and weightArr
     }
 
     // 3. While the heap size is greater than 1:
     while (minHeap.getSize() > 1) {
         //    - Pop two smallest nodes
-        int firstSmallest = minHeap.pop(weightArr); // take the first smallest weight
-        int secondSmallest = minHeap.pop(weightArr); // take the next smallest weight
+        int firstSmallest = minHeap.pop(weightArr); // take the index of the first smallest weight
+        int secondSmallest = minHeap.pop(weightArr); // take the index of the next smallest weight
         //    - Create a new parent node with combined weight
         int parent = nextFree++; // make a parent index to hold the combined weight
         weightArr[parent] = weightArr[firstSmallest] + weightArr[secondSmallest]; // combine the two smallest weights into a singular weight, add it to the end of the weightArr
@@ -129,7 +129,29 @@ int buildEncodingTree(int nextFree) {
 
 // Step 4: Use an STL stack to generate codes
 void generateCodes(int root, string codes[]) {
+    // Use stack<pair<int, string>> to simulate DFS traversal.
+    stack<pair<int, string>> stack; // crate a stack that holds pairs of ints and strings
+    stack.push({root, ""}); // push the root(the max combined weight with no code), to the stack
+    // while there are elements in the stack...
+    while (!stack.empty()) {
+        auto [node, code] = stack.top(); // create a pair for the index of the element and a string for the code
+        stack.pop(); // remove the top element
 
+        // check if it is a leaf
+        if (leftArr[node] == -1 && rightArr[node] == -1) {
+            codes[charArr[node] - 'a'] = code; // add the code to the codes[]
+        }
+        else {
+            // check if the right node is not a leaf
+            if (rightArr[node] != -1) {
+                stack.push({rightArr[node], code + "1"}); // push it back to the stack with 1 appended to its code
+            }
+            // check if the left node is not a leaf
+            if (leftArr[node] != -1) {
+                stack.push({leftArr[node], code + "0"}); // push it back to the stack with 0 appended to its code
+            }
+        }
+    }
 }
 
 // Step 5: Print table and encoded message
