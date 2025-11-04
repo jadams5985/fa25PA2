@@ -65,19 +65,21 @@ struct MinHeap {
     MinHeap() { size = 0; } // constructor for the heap, init size to 0
 
 private:
-    int getParentOf(int childIndex) { return (childIndex-1) / 2; };
-    int getLeftChildOf(int parentIndex) { return (parentIndex * 2) + 1; }
-    int getRightChildOf(int parentIndex) { return (parentIndex * 2) + 2; }
+    int getParentOf(int i) { return (i - 1) / 2; }
+    int getLeftChildOf(int i) { return (i * 2) + 1; }
+    int getRightChildOf(int i) { return (i * 2) + 2; }
 
-    bool hasParent(int index) { return getParentOf(index) >= 0; }
-    bool hasLeftChild(int index) { return getLeftChildOf(index) < size; }
-    bool hasRightChild(int index) { return getRightChildOf(index) < size; }
+    bool hasParent(int i) { return getParentOf(i) >= 0; }
+    bool hasLeftChild(int i) { return getLeftChildOf(i) < size; }
+    bool hasRightChild(int i) { return getRightChildOf(i) < size; }
 
 public:
-    int peek() {
+    int peek() const {
         if (size == 0) { return -1; }
         return data[0]; // index of smallest weight node
     }
+
+    int getSize() const { return size; }
 
     // add the new element to heap index
     // 3(a) -> +1(b) -> 3(a),1(b) -> 1(b),3(a) ...
@@ -110,10 +112,17 @@ public:
     void downheap(int pos, int weightArr[]) {
         // the init pos is 0, we then need to check if it has sub nodes
         while (hasLeftChild(pos)) {
-            int smallerChild = getLeftChildOf(pos); // initially make the smaller child the left one
-            // check if there is a right child
-            if ()
+            int smallerChild = getLeftChildOf(pos); // smallerChild holds the index of the smaller child of pos
+            // check if there is a right child AND if it is weight is less than the weight of the left child
+            if (hasRightChild(pos) && weightArr[data[getRightChildOf(pos)]] < weightArr[data[smallerChild]]) {
+                // the right child exists and is the smaller of the two children
+                smallerChild = getRightChildOf(pos); // update the index if the child
+            }
+            // if the parent's weight is less than the child's weight we don't have to do any thing
+            if (weightArr[data[pos]] < weightArr[data[smallerChild]] ) { break; }
 
+            swap(data[pos], data[smallerChild]); // swap the indices of the weights
+            pos = smallerChild; // position moves to follow the node
         }
     }
 

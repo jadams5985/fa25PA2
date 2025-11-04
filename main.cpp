@@ -28,15 +28,17 @@ int main() {
     // Step 1: Read file and count letter frequencies
     buildFrequencyTable(freq, "input.txt"); // updates the frequencies for the letters in the text
 
-    for (int i = 0; i < 26; i++) {
-        cout << freq[i] << endl;
-    }
-
+    // for (int i = 0; i < 26; i++) {
+    //     cout << freq[i] << endl;
+    // }
+    //
     // Step 2: Create leaf nodes for each character with nonzero frequency
     int nextFree = createLeafNodes(freq);
 
     // Step 3: Build encoding tree using your heap
     int root = buildEncodingTree(nextFree);
+
+    // cout << "Root: " << weightArr[root] << endl;
 
     // Step 4: Generate binary codes using an STL stack
     string codes[26];
@@ -99,32 +101,35 @@ int createLeafNodes(int freq[]) {
 // Step 3: Build the encoding tree using heap operations
 int buildEncodingTree(int nextFree) {
     MinHeap minHeap; // Create a MinHeap object.
-
     // Push all leaf node indices into the heap.
     // runs for all elements we added to weights/chars/lefts/rights
     for (int i = 0; i < nextFree; ++i) {
         minHeap.push(i, weightArr); // call push on minHeap and pass the current index and weightArr[i]
     }
-    for (int i = 0; i < nextFree; ++i) {
-        cout << minHeap.peek()<< endl;
-        minHeap.pop(&weightArr[i]);
-    }
 
     // 3. While the heap size is greater than 1:
-    //    - Pop two smallest nodes
-    //    - Create a new parent node with combined weight
-    //    - Set left/right pointers
-    //    - Push new parent index back into the heap
+    while (minHeap.getSize() > 1) {
+        //    - Pop two smallest nodes
+        int firstSmallest = minHeap.pop(weightArr); // take the first smallest weight
+        int secondSmallest = minHeap.pop(weightArr); // take the next smallest weight
+        //    - Create a new parent node with combined weight
+        int parent = nextFree++; // make a parent index to hold the combined weight
+        weightArr[parent] = weightArr[firstSmallest] + weightArr[secondSmallest]; // combine the two smallest weights into a singular weight, add it to the end of the weightArr
+        //    - Set left/right pointers
+        leftArr[parent] = firstSmallest; // set the parent index of the combined weight to the leftArr
+        rightArr[parent] = secondSmallest; // set the parent index of the combined weight to the rightArr
+        charArr[parent] = '*'; // add a placeholder, p for parent
+        //    - Push new parent index back into the heap
+        minHeap.push(parent, weightArr); // push the new element to the heap, pass in the weightArr
+    }
+
     // 4. Return the index of the last remaining node (root)
-    return -1; // placeholder
+    return minHeap.pop(weightArr); // remove the root weight
 }
 
 // Step 4: Use an STL stack to generate codes
 void generateCodes(int root, string codes[]) {
-    // TODO:
-    // Use stack<pair<int, string>> to simulate DFS traversal.
-    // Left edge adds '0', right edge adds '1'.
-    // Record code when a leaf node is reached.
+
 }
 
 // Step 5: Print table and encoded message
