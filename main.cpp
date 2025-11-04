@@ -130,7 +130,7 @@ int buildEncodingTree(int nextFree) {
 // Step 4: Use an STL stack to generate codes
 void generateCodes(int root, string codes[]) {
     // Use stack<pair<int, string>> to simulate DFS traversal.
-    stack<pair<int, string>> stack; // crate a stack that holds pairs of ints and strings
+    stack<pair<int, string>> stack; // crate a stack that holds pairs of ints and strings, hold the indices of each node and their code
     stack.push({root, ""}); // push the root(the max combined weight with no code), to the stack
     // while there are elements in the stack...
     while (!stack.empty()) {
@@ -139,8 +139,9 @@ void generateCodes(int root, string codes[]) {
 
         // check if it is a leaf
         if (leftArr[node] == -1 && rightArr[node] == -1) {
-            codes[charArr[node] - 'a'] = code; // add the code to the codes[]
+            codes[charArr[node] - 'a'] = code; // add the code to the codes[] at the index of the node
         }
+        // not a leaf, aka has sub nodes
         else {
             // check if the right node is not a leaf
             if (rightArr[node] != -1) {
@@ -159,7 +160,7 @@ void encodeMessage(const string& filename, string codes[]) {
     cout << "\nCharacter : Code\n";
     for (int i = 0; i < 26; ++i) {
         if (!codes[i].empty())
-            cout << char('a' + i) << " : " << codes[i] << "\n";
+            cout << setw(5) << right << char('a' + i) << setw(7) << ": " << setw(6) << left << codes[i] << "\n";
     }
 
     cout << "\nEncoded message:\n";
